@@ -121,27 +121,27 @@
             z-index: 15;
         }
 
-        /* КОНТЕЙНЕР ДЛЯ АДАПТИВНОГО СЕРЦЯ */
+        /* КОНТЕЙНЕР ДЛЯ ІДЕАЛЬНОГО СЕРЦЯ */
         #heart-container {
             position: absolute;
-            width: 100vw;
-            height: 100vh;
-            top: 0;
-            left: 0;
+            width: 90vw;
+            max-width: 380px;
+            height: 90vw;
+            max-height: 380px;
             pointer-events: none;
             z-index: 2;
+            display: none;
         }
 
         .heart-text-particle {
             position: absolute;
             color: #ff477e;
-            font-size: 10px; /* Оптимальний розмір літер для телефону */
+            font-size: 10px;
             font-weight: bold;
-            white-space: nowrap; /* ЗАБОРОНА ПЕРЕНЕСЕННЯ СЛІВ */
-            display: inline-block;
+            white-space: nowrap;
             opacity: 0;
             transform: translate(-50%, -50%) scale(0.5);
-            animation: drawHeartParticle 0.5s forwards ease-out;
+            animation: drawHeartParticle 0.4s forwards ease-out;
             text-shadow: 0 0 4px rgba(255, 71, 126, 0.8);
         }
 
@@ -206,12 +206,13 @@
             
             startFallingHearts();
 
-            // Через 3 секунди прибираємо вікно і малюємо ідеальне серце
+            // Через 3 секунди прибираємо вікно і вмикаємо серце
             setTimeout(() => {
                 mainWindow.classList.add('fade-out');
                 
                 setTimeout(() => {
                     mainWindow.style.display = 'none';
+                    document.getElementById('heart-container').style.display = 'block';
                     animateTextHeart();
                 }, 600);
 
@@ -231,18 +232,12 @@
             }, 350);
         }
 
-        // Побудова РІВНОГО серця з тексту
+        // Абсолютно стабільна побудова контуру серця
         function animateTextHeart() {
             const container = document.getElementById('heart-container');
-            
-            // Зменшили кількість кроків, щоб написи не наповзали один на одного по центру
-            const totalParticles = 65; 
-            
-            const centerX = window.innerWidth / 2;
-            const centerY = window.innerHeight / 2; 
-            
-            // Адаптивний масштаб: рівно 4.2% від ширини екрана телефону (серце буде великим, але акуратним)
-            const scale = window.innerWidth * 0.042; 
+            const totalParticles = 40; 
+            const width = container.offsetWidth;
+            const height = container.offsetHeight;
 
             let i = 0;
 
@@ -252,28 +247,26 @@
                     return;
                 }
 
-                // Вираховуємо крок від 0 до 2*PI
                 const t = (i / totalParticles) * 2 * Math.PI;
                 
-                // Математична формула ідеального серця
+                // Геометрично вирівняна формула контуру, що підлаштовується під квадратний контейнер
                 const x = 16 * Math.pow(Math.sin(t), 3);
                 const y = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
 
-                const posX = centerX + x * scale;
-                const posY = centerY + y * scale;
+                // Центруємо і масштабуємо відносно блоку
+                const posX = (width / 2) + (x * (width / 38));
+                const posY = (height / 2.1) + (y * (height / 38));
 
                 const p = document.createElement('div');
                 p.classList.add('heart-text-particle');
                 p.innerText = 'i love ya';
                 p.style.left = posX + 'px';
                 p.style.top = posY + 'px';
-                
-                // Робимо кут нахилу тексту красивим уздовж контуру серця
-                p.style.transform = `translate(-50%, -50%) rotate(${Math.sin(t) * 25}deg)`;
+                p.style.transform = `translate(-50%, -50%) rotate(${Math.sin(t) * 30}deg)`;
 
                 container.appendChild(p);
                 i++;
-            }, 85); // Малюється дуже плавно та розмірено
+            }, 90); 
         }
     </script>
 </body>
