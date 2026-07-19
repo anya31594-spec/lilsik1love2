@@ -42,7 +42,7 @@
             100% { transform: translateY(105vh) rotate(360deg); opacity: 0; }
         }
 
-        /* РЕТРО-ВІКНО (ПЕРШИЙ ЕКРАН) */
+        /* РЕТРО-ВІКНО */
         .window-box {
             background-color: #1a1a1a;
             border: 3px solid #ffffff;
@@ -51,6 +51,15 @@
             box-shadow: 8px 8px 0px #333333;
             z-index: 10;
             position: relative;
+            transition: opacity 0.8s ease, transform 0.8s ease;
+            opacity: 1;
+        }
+
+        /* Клас для плавного зникнення рамочки */
+        .window-box.fade-out {
+            opacity: 0;
+            transform: scale(0.9);
+            pointer-events: none;
         }
 
         .window-header {
@@ -76,8 +85,14 @@
         .question {
             font-size: 1.3rem;
             font-weight: bold;
-            margin-bottom: 30px;
             line-height: 1.5;
+            transition: all 0.3s ease;
+        }
+
+        /* Стиль для довгого тексту відповіді, щоб він гарно вписувався в рамку */
+        .question.success-text {
+            font-size: 1.15rem;
+            line-height: 1.6;
         }
 
         /* КНОПКИ */
@@ -87,6 +102,7 @@
             gap: 25px;
             height: 50px;
             position: relative;
+            margin-top: 30px;
         }
 
         .btn {
@@ -111,26 +127,6 @@
         #no-btn {
             position: relative;
             z-index: 15;
-        }
-
-        /* ТЕКСТ ФРАЗИ ПІСЛЯ КЛІКУ (У ЦЕНТРІ СЕРЦЯ) */
-        .final-message {
-            position: absolute;
-            z-index: 5;
-            text-align: center;
-            font-size: 1.3rem;
-            font-weight: bold;
-            line-height: 1.6;
-            max-width: 85%;
-            color: #ffffff;
-            text-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
-            display: none; /* З'явиться після кліку */
-            animation: fadeInText 2s forwards;
-        }
-
-        @keyframes fadeInText {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
         }
 
         /* КОНТЕЙНЕР ДЛЯ ВЕЛИКОГО СЕРЦЯ */
@@ -166,7 +162,7 @@
 </head>
 <body>
 
-    <!-- Ретро-вікно (зникне після Yes) -->
+    <!-- Ретро-вікно -->
     <div class="window-box" id="main-window">
         <div class="window-header">
             <div class="dot"></div>
@@ -174,17 +170,12 @@
             <div class="dot"></div>
         </div>
         <div class="window-content">
-            <div class="question">Do you love me?</div>
-            <div class="btn-container">
+            <div class="question" id="text-display">Do you love me?</div>
+            <div class="btn-container" id="buttons-area">
                 <button class="btn" id="yes-btn" onclick="selectYes()">Yes</button>
                 <button class="btn" id="no-btn" onclick="moveNoButton(this)">No</button>
             </div>
         </div>
-    </div>
-
-    <!-- Текст, який з'явиться замість вікна прямо всередині серця -->
-    <div class="final-message" id="love-message">
-        can't believe you clicked yes! I love ya to my lil' babe
     </div>
 
     <!-- Контейнер для малювання великого серця -->
@@ -212,17 +203,32 @@
 
         // Користувач натиснув YES
         function selectYes() {
-            // 1. Повністю видаляємо (ховаємо) ретро-рамку
-            document.getElementById('main-window').style.display = 'none';
+            const windowText = document.getElementById('text-display');
+            const buttonsArea = document.getElementById('buttons-area');
+            const mainWindow = document.getElementById('main-window');
+
+            // 1. Ховаємо кнопки всередині рамки
+            buttonsArea.style.display = 'none';
             
-            // 2. Показуємо романтичний текст по центру
-            document.getElementById('love-message').style.display = 'block';
+            // 2. Змінюємо текст у рамці на новий та додаємо йому красивий стиль
+            windowText.innerText = "can't believe you clicked yes! I love ya to my lil' babe";
+            windowText.classList.add('success-text');
             
-            // 3. Вмикаємо дощ із сердечок
+            // 3. Вмикаємо фоновий дощ із сердечок
             startFallingHearts();
 
-            // 4. Запускаємо ПОВІЛЬНЕ малювання ВЕЛИКОГО серця
-            setTimeout(animateTextHeart, 200);
+            // 4. Таймер: через 3 секунди (3000 мс) прибираємо рамку і запускаємо малювання серця
+            setTimeout(() => {
+                // Додаємо клас для плавного зникнення рамки
+                mainWindow.classList.add('fade-out');
+                
+                // Чекаємо закінчення анімації зникнення (800мс) і запускаємо малювання серця
+                setTimeout(() => {
+                    mainWindow.style.display = 'none';
+                    animateTextHeart();
+                }, 800);
+
+            }, 3000);
         }
 
         // Фоновий дощ
@@ -241,16 +247,16 @@
         // Побудова великого серця з тексту
         function animateTextHeart() {
             const container = document.getElementById('heart-container');
-            const totalParticles = 90; // Більше частинок для деталізованого великого контуру
+            const totalParticles = 90; 
             const centerX = window.innerWidth / 2;
             const centerY = window.innerHeight / 2; 
             
-            // Збільшений масштаб для великого екрана телефону (серце на весь екран)
+            // Збільшений масштаб для великого екрана телефону
             const scale = Math.min(window.innerWidth * 0.065, 22); 
 
             let i = 0;
 
-            // Збільшено інтервал до 75мс (було 40мс) — тепер серце малюється набагато повільніше та заворожуюче
+            // Серце вимальовується плавно і повільно (кожні 75мс по одній частинці)
             const drawingInterval = setInterval(() => {
                 if (i >= totalParticles) {
                     clearInterval(drawingInterval);
@@ -272,7 +278,6 @@
                 p.style.left = posX + 'px';
                 p.style.top = posY + 'px';
                 
-                // Легкий нахил написів за формою вигину
                 p.style.transform = `translate(-50%, -50%) rotate(${Math.sin(t) * 20}deg)`;
 
                 container.appendChild(p);
