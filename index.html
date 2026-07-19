@@ -206,7 +206,7 @@
             
             startFallingHearts();
 
-            // Через 3 секунди прибираємо вікно і вмикаємо серце
+            // Через 3 секунди плавно ховаємо вікно і вмикаємо серце
             setTimeout(() => {
                 mainWindow.classList.add('fade-out');
                 
@@ -249,11 +249,10 @@
 
                 const t = (i / totalParticles) * 2 * Math.PI;
                 
-                // Геометрично вирівняна формула контуру, що підлаштовується під квадратний контейнер
+                // Формула контуру, що ідеально підлаштовується під блок
                 const x = 16 * Math.pow(Math.sin(t), 3);
                 const y = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
 
-                // Центруємо і масштабуємо відносно блоку
                 const posX = (width / 2) + (x * (width / 38));
                 const posY = (height / 2.1) + (y * (height / 38));
 
