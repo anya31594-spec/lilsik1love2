@@ -89,7 +89,7 @@
             transition: all 0.3s ease;
         }
 
-        /* Стиль для довгого тексту відповіді, щоб він гарно вписувався в рамку */
+        /* Стиль для довгого тексту відповіді */
         .question.success-text {
             font-size: 1.15rem;
             line-height: 1.6;
@@ -210,19 +210,18 @@
             // 1. Ховаємо кнопки всередині рамки
             buttonsArea.style.display = 'none';
             
-            // 2. Змінюємо текст у рамці на новий та додаємо йому красивий стиль
+            // 2. Змінюємо текст у рамці на новий
             windowText.innerText = "can't believe you clicked yes! I love ya to my lil' babe";
             windowText.classList.add('success-text');
             
             // 3. Вмикаємо фоновий дощ із сердечок
             startFallingHearts();
 
-            // 4. Таймер: через 3 секунди (3000 мс) прибираємо рамку і запускаємо малювання серця
+            // 4. Через 3 секунди плавно видаляємо рамку разом із текстом
             setTimeout(() => {
-                // Додаємо клас для плавного зникнення рамки
                 mainWindow.classList.add('fade-out');
                 
-                // Чекаємо закінчення анімації зникнення (800мс) і запускаємо малювання серця
+                // Після повного зникнення рамки запускаємо малювання чистого серця
                 setTimeout(() => {
                     mainWindow.style.display = 'none';
                     animateTextHeart();
@@ -251,12 +250,10 @@
             const centerX = window.innerWidth / 2;
             const centerY = window.innerHeight / 2; 
             
-            // Збільшений масштаб для великого екрана телефону
             const scale = Math.min(window.innerWidth * 0.065, 22); 
 
             let i = 0;
 
-            // Серце вимальовується плавно і повільно (кожні 75мс по одній частинці)
             const drawingInterval = setInterval(() => {
                 if (i >= totalParticles) {
                     clearInterval(drawingInterval);
