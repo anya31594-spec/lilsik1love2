@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Do you love me? ❤️</title>
     <style>
         * {
@@ -47,15 +47,14 @@
             background-color: #1a1a1a;
             border: 3px solid #ffffff;
             width: 90%;
-            max-width: 360px;
+            max-width: 340px;
             box-shadow: 8px 8px 0px #333333;
             z-index: 10;
             position: relative;
-            transition: opacity 0.8s ease, transform 0.8s ease;
+            transition: opacity 0.6s ease, transform 0.6s ease;
             opacity: 1;
         }
 
-        /* Клас для плавного зникнення рамочки */
         .window-box.fade-out {
             opacity: 0;
             transform: scale(0.9);
@@ -78,20 +77,18 @@
         }
 
         .window-content {
-            padding: 30px 20px;
+            padding: 25px 15px;
             text-align: center;
         }
 
         .question {
-            font-size: 1.3rem;
+            font-size: 1.25rem;
             font-weight: bold;
             line-height: 1.5;
-            transition: all 0.3s ease;
         }
 
-        /* Стиль для довгого тексту відповіді */
         .question.success-text {
-            font-size: 1.15rem;
+            font-size: 1.1rem;
             line-height: 1.6;
         }
 
@@ -99,29 +96,24 @@
         .btn-container {
             display: flex;
             justify-content: center;
-            gap: 25px;
+            gap: 20px;
             height: 50px;
             position: relative;
-            margin-top: 30px;
+            margin-top: 25px;
         }
 
         .btn {
             background-color: #ffffff;
             color: #121212;
             border: 2px solid #ffffff;
-            padding: 10px 25px;
+            padding: 10px 20px;
             font-size: 1.1rem;
             font-weight: bold;
             font-family: 'Courier New', Courier, monospace;
             cursor: pointer;
             outline: none;
             height: 45px;
-            min-width: 90px;
-        }
-
-        .btn:active {
-            background-color: #121212;
-            color: #ffffff;
+            min-width: 85px;
         }
 
         #no-btn {
@@ -129,11 +121,11 @@
             z-index: 15;
         }
 
-        /* КОНТЕЙНЕР ДЛЯ ВЕЛИКОГО СЕРЦЯ */
+        /* КОНТЕЙНЕР ДЛЯ АДАПТИВНОГО СЕРЦЯ */
         #heart-container {
             position: absolute;
-            width: 100%;
-            height: 100%;
+            width: 100vw;
+            height: 100vh;
             top: 0;
             left: 0;
             pointer-events: none;
@@ -143,13 +135,14 @@
         .heart-text-particle {
             position: absolute;
             color: #ff477e;
-            font-size: 11px;
+            font-size: 10px; /* Оптимальний розмір літер для телефону */
             font-weight: bold;
-            white-space: nowrap;
+            white-space: nowrap; /* ЗАБОРОНА ПЕРЕНЕСЕННЯ СЛІВ */
+            display: inline-block;
             opacity: 0;
             transform: translate(-50%, -50%) scale(0.5);
-            animation: drawHeartParticle 0.6s forwards ease-out;
-            text-shadow: 0 0 5px rgba(255, 71, 126, 0.9);
+            animation: drawHeartParticle 0.5s forwards ease-out;
+            text-shadow: 0 0 4px rgba(255, 71, 126, 0.8);
         }
 
         @keyframes drawHeartParticle {
@@ -187,7 +180,7 @@
             if (button.style.position !== 'fixed') {
                 button.style.position = 'fixed';
             }
-            const padding = 30;
+            const padding = 25;
             const btnWidth = button.offsetWidth;
             const btnHeight = button.offsetHeight;
 
@@ -201,31 +194,26 @@
             button.style.top = randomY + 'px';
         }
 
-        // Користувач натиснув YES
+        // Клік на YES
         function selectYes() {
             const windowText = document.getElementById('text-display');
             const buttonsArea = document.getElementById('buttons-area');
             const mainWindow = document.getElementById('main-window');
 
-            // 1. Ховаємо кнопки всередині рамки
             buttonsArea.style.display = 'none';
-            
-            // 2. Змінюємо текст у рамці на новий
             windowText.innerText = "can't believe you clicked yes! I love ya to my lil' babe";
             windowText.classList.add('success-text');
             
-            // 3. Вмикаємо фоновий дощ із сердечок
             startFallingHearts();
 
-            // 4. Через 3 секунди плавно видаляємо рамку разом із текстом
+            // Через 3 секунди прибираємо вікно і малюємо ідеальне серце
             setTimeout(() => {
                 mainWindow.classList.add('fade-out');
                 
-                // Після повного зникнення рамки запускаємо малювання чистого серця
                 setTimeout(() => {
                     mainWindow.style.display = 'none';
                     animateTextHeart();
-                }, 800);
+                }, 600);
 
             }, 3000);
         }
@@ -240,17 +228,21 @@
                 heart.style.animationDuration = Math.random() * 2 + 3 + 's';
                 document.body.appendChild(heart);
                 setTimeout(() => heart.remove(), 5000);
-            }, 300);
+            }, 350);
         }
 
-        // Побудова великого серця з тексту
+        // Побудова РІВНОГО серця з тексту
         function animateTextHeart() {
             const container = document.getElementById('heart-container');
-            const totalParticles = 90; 
+            
+            // Зменшили кількість кроків, щоб написи не наповзали один на одного по центру
+            const totalParticles = 65; 
+            
             const centerX = window.innerWidth / 2;
             const centerY = window.innerHeight / 2; 
             
-            const scale = Math.min(window.innerWidth * 0.065, 22); 
+            // Адаптивний масштаб: рівно 4.2% від ширини екрана телефону (серце буде великим, але акуратним)
+            const scale = window.innerWidth * 0.042; 
 
             let i = 0;
 
@@ -260,9 +252,10 @@
                     return;
                 }
 
+                // Вираховуємо крок від 0 до 2*PI
                 const t = (i / totalParticles) * 2 * Math.PI;
                 
-                // Формула серця
+                // Математична формула ідеального серця
                 const x = 16 * Math.pow(Math.sin(t), 3);
                 const y = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
 
@@ -275,11 +268,12 @@
                 p.style.left = posX + 'px';
                 p.style.top = posY + 'px';
                 
-                p.style.transform = `translate(-50%, -50%) rotate(${Math.sin(t) * 20}deg)`;
+                // Робимо кут нахилу тексту красивим уздовж контуру серця
+                p.style.transform = `translate(-50%, -50%) rotate(${Math.sin(t) * 25}deg)`;
 
                 container.appendChild(p);
                 i++;
-            }, 75); 
+            }, 85); // Малюється дуже плавно та розмірено
         }
     </script>
 </body>
